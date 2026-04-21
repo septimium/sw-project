@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class RecipeController {
@@ -22,6 +23,24 @@ public class RecipeController {
     public String index(Model model) {
         model.addAttribute("recipes", xmlDataService.getRecipesInMemory());
         return "index";
+    }
+
+    @GetMapping("/recommend-skill")
+    public String recommendSkill(Model model) {
+        model.addAttribute("recipes", xmlDataService.getRecipesBySkill());
+        return "index";
+    }
+
+    @GetMapping("/recommend-skill-cuisine")
+    public String recommendSkillCuisine(Model model) {
+        model.addAttribute("recipes", xmlDataService.getRecipesBySkillAndCuisine());
+        return "index";
+    }
+
+    @GetMapping(value = "/xslt", produces = "text/html;charset=UTF-8")
+    @ResponseBody
+    public String xsltView() {
+        return xmlDataService.getRecipesXslt();
     }
 
     @GetMapping("/add-recipe")
@@ -54,4 +73,3 @@ public class RecipeController {
         return "redirect:/";
     }
 }
-

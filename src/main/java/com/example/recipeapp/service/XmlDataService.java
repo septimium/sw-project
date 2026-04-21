@@ -20,6 +20,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 @Service
 public class XmlDataService {
@@ -96,7 +99,7 @@ public class XmlDataService {
     }
 
     public void addUser(User user) {
-        usersInMemory.add(user);
+        usersInMemory.add(0, user);
         saveDocument();
     }
 
@@ -164,5 +167,58 @@ public class XmlDataService {
 
     public List<User> getUsersInMemory() {
         return usersInMemory;
+    }
+
+    public List<Recipe> getRecipesBySkill() {
+        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[1]/skillLevel]");
+    }
+
+    public List<Recipe> getRecipesBySkillAndCuisine() {
+        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[1]/skillLevel and (cuisine1 = /appData/users/user[1]/preferredCuisine or cuisine2 = /appData/users/user[1]/preferredCuisine)]");
+    }
+
+    private List<Recipe> queryRecipesByXPath(String expression) {
+        List<Recipe> resultList = new ArrayList<>();
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new File(FILE_PATH));
+            doc.getDocumentElement().normalize();
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element el = (Element) node;
+                    String title = getElementText(el, "title");
+                    String cuisine1 = getElementText(el, "cuisine1");
+                    String cuisine2 = getElementText(el, "cuisine2");
+                    String difficulty = getElementText(el, "difficulty");
+                    resultList.add(new Recipe(title, cuisine1, cuisine2, difficulty));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
+    public String getRecipesXslt() {
+        try {
+            File xmlFile = new File(FILE_PATH);
+            File xsltFile = new File("src/main/resources/recipes.xsl");
+            
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(new javax.xml.transform.stream.StreamSource(xsltFile));
+            
+            java.io.StringWriter writer = new java.io.StringWriter();
+            transformer.transform(new javax.xml.transform.stream.StreamSource(xmlFile), new javax.xml.transform.stream.StreamResult(writer));
+            return writer.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error transforming XML";
+        }
     }
 }
