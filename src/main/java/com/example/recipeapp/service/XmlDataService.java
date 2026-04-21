@@ -177,6 +177,18 @@ public class XmlDataService {
         return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[1]/skillLevel and (cuisine1 = /appData/users/user[1]/preferredCuisine or cuisine2 = /appData/users/user[1]/preferredCuisine)]");
     }
 
+    public Recipe getRecipeByTitle(String title) {
+        // Enclose title in quotes safely or handle apostrophes. Assuming standard string matches for simplicity.
+        String safeTitle = title.replace("'", "&apos;");
+        List<Recipe> recipes = queryRecipesByXPath("//recipe[title=\"" + safeTitle + "\"]");
+        return recipes.isEmpty() ? null : recipes.get(0);
+    }
+
+    public List<Recipe> getRecipesByCuisine(String cuisine) {
+        String safeCuisine = cuisine.replace("'", "&apos;");
+        return queryRecipesByXPath("//recipe[cuisine1=\"" + safeCuisine + "\" or cuisine2=\"" + safeCuisine + "\"]");
+    }
+
     private List<Recipe> queryRecipesByXPath(String expression) {
         List<Recipe> resultList = new ArrayList<>();
         try {

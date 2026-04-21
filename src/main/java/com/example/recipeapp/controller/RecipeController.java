@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -41,6 +42,20 @@ public class RecipeController {
     @ResponseBody
     public String xsltView() {
         return xmlDataService.getRecipesXslt();
+    }
+
+    @GetMapping("/recipe-details")
+    public String recipeDetails(@RequestParam("title") String title, Model model) {
+        Recipe recipe = xmlDataService.getRecipeByTitle(title);
+        model.addAttribute("recipe", recipe);
+        return "recipe-details";
+    }
+
+    @GetMapping("/recipes-by-cuisine")
+    public String recipesByCuisine(@RequestParam("cuisine") String cuisine, Model model) {
+        model.addAttribute("recipes", xmlDataService.getRecipesByCuisine(cuisine));
+        model.addAttribute("selectedCuisine", cuisine);
+        return "index";
     }
 
     @GetMapping("/add-recipe")
