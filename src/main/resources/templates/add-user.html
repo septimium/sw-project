@@ -3,55 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Add User</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; }
-        .form-container { background: white; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        .error { color: red; font-size: 0.9em; margin-top: 5px; display: block; }
-        button { background: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; width: 100%; }
-        button:hover { background: #218838; }
-        .back { display: block; margin-top: 15px; text-align: center; text-decoration: none; color: #007bff; }
-    </style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
-    <div class="form-container">
-        <h2>Create a New User</h2>
-        <form action="#" th:action="@{/add-user}" th:object="${user}" method="post">
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" th:field="*{name}" />
-                <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">RecipeApp</a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 600px;">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h3 class="mb-0 text-primary">Create a New User</h3></div>
+            <div class="card-body p-4">
+                <form action="#" th:action="@{/add-user}" th:object="${user}" method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">Name:</label>
+                        <input type="text" id="name" class="form-control" th:field="*{name}" />
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="surname" class="form-label fw-bold">Surname:</label>
+                        <input type="text" id="surname" class="form-control" th:field="*{surname}" />
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="skillLevel" class="form-label fw-bold">Skill Level:</label>
+                        <select id="skillLevel" class="form-select" th:field="*{skillLevel}">
+                            <option value="">--Select--</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="preferredCuisine" class="form-label fw-bold">Preferred Cuisine:</label>
+                        <input type="text" id="preferredCuisine" class="form-control" th:field="*{preferredCuisine}" />
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('preferredCuisine')}" th:errors="*{preferredCuisine}"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mb-3">Add User to XML</button>
+                    <div class="text-center">
+                        <a class="text-decoration-none" href="/">&larr; Back to Recipes</a>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label for="surname">Surname:</label>
-                <input type="text" id="surname" th:field="*{surname}" />
-                <span class="error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="skillLevel">Skill Level:</label>
-                <select id="skillLevel" th:field="*{skillLevel}">
-                    <option value="">--Select--</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
-                <span class="error" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="preferredCuisine">Preferred Cuisine:</label>
-                <input type="text" id="preferredCuisine" th:field="*{preferredCuisine}" />
-                <span class="error" th:if="${#fields.hasErrors('preferredCuisine')}" th:errors="*{preferredCuisine}"></span>
-            </div>
-
-            <button type="submit">Add User to XML</button>
-        </form>
-        <a class="back" href="/">← Back to Recipes</a>
+        </div>
     </div>
 
 </body>

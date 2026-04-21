@@ -169,16 +169,45 @@ public class XmlDataService {
         return usersInMemory;
     }
 
+    public List<Recipe> getRecipesBySkill(int userPosition) {
+        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[" + userPosition + "]/skillLevel]");
+    }
+
     public List<Recipe> getRecipesBySkill() {
-        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[1]/skillLevel]");
+        return getRecipesBySkill(1);
+    }
+
+    public List<Recipe> getRecipesBySkillAndCuisine(int userPosition) {
+        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[" + userPosition + "]/skillLevel and (cuisine1 = /appData/users/user[" + userPosition + "]/preferredCuisine or cuisine2 = /appData/users/user[" + userPosition + "]/preferredCuisine)]");
     }
 
     public List<Recipe> getRecipesBySkillAndCuisine() {
-        return queryRecipesByXPath("//recipe[difficulty = /appData/users/user[1]/skillLevel and (cuisine1 = /appData/users/user[1]/preferredCuisine or cuisine2 = /appData/users/user[1]/preferredCuisine)]");
+        return getRecipesBySkillAndCuisine(1);
+    }
+
+    public String getRecipesXslt(int userPosition) {
+        try {
+            File xmlFile = new File(FILE_PATH);
+            File xsltFile = new File("src/main/resources/recipes.xsl");
+            
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(new javax.xml.transform.stream.StreamSource(xsltFile));
+            transformer.setParameter("userPos", String.valueOf(userPosition));
+            
+            java.io.StringWriter writer = new java.io.StringWriter();
+            transformer.transform(new javax.xml.transform.stream.StreamSource(xmlFile), new javax.xml.transform.stream.StreamResult(writer));
+            return writer.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error transforming XML";
+        }
+    }
+
+    public String getRecipesXslt() {
+        return getRecipesXslt(1);
     }
 
     public Recipe getRecipeByTitle(String title) {
-        // Enclose title in quotes safely or handle apostrophes. Assuming standard string matches for simplicity.
         String safeTitle = title.replace("'", "&apos;");
         List<Recipe> recipes = queryRecipesByXPath("//recipe[title=\"" + safeTitle + "\"]");
         return recipes.isEmpty() ? null : recipes.get(0);
@@ -215,22 +244,5 @@ public class XmlDataService {
             e.printStackTrace();
         }
         return resultList;
-    }
-
-    public String getRecipesXslt() {
-        try {
-            File xmlFile = new File(FILE_PATH);
-            File xsltFile = new File("src/main/resources/recipes.xsl");
-            
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(new javax.xml.transform.stream.StreamSource(xsltFile));
-            
-            java.io.StringWriter writer = new java.io.StringWriter();
-            transformer.transform(new javax.xml.transform.stream.StreamSource(xmlFile), new javax.xml.transform.stream.StreamResult(writer));
-            return writer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error transforming XML";
-        }
     }
 }

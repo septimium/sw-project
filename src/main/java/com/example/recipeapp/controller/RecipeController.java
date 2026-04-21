@@ -23,25 +23,28 @@ public class RecipeController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("recipes", xmlDataService.getRecipesInMemory());
+        model.addAttribute("users", xmlDataService.getUsersInMemory());
         return "index";
     }
 
     @GetMapping("/recommend-skill")
-    public String recommendSkill(Model model) {
-        model.addAttribute("recipes", xmlDataService.getRecipesBySkill());
+    public String recommendSkill(@RequestParam(name = "userPosition", defaultValue = "1") int userPosition, Model model) {
+        model.addAttribute("recipes", xmlDataService.getRecipesBySkill(userPosition));
+        model.addAttribute("users", xmlDataService.getUsersInMemory());
         return "index";
     }
 
     @GetMapping("/recommend-skill-cuisine")
-    public String recommendSkillCuisine(Model model) {
-        model.addAttribute("recipes", xmlDataService.getRecipesBySkillAndCuisine());
+    public String recommendSkillCuisine(@RequestParam(name = "userPosition", defaultValue = "1") int userPosition, Model model) {
+        model.addAttribute("recipes", xmlDataService.getRecipesBySkillAndCuisine(userPosition));
+        model.addAttribute("users", xmlDataService.getUsersInMemory());
         return "index";
     }
 
     @GetMapping(value = "/xslt", produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public String xsltView() {
-        return xmlDataService.getRecipesXslt();
+    public String xsltView(@RequestParam(name = "userPosition", defaultValue = "1") int userPosition) {
+        return xmlDataService.getRecipesXslt(userPosition);
     }
 
     @GetMapping("/recipe-details")
