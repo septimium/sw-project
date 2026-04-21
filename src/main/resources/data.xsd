@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="difficultyLevel">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Beginner"/>
+            <xs:enumeration value="Intermediate"/>
+            <xs:enumeration value="Advanced"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="recipe">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="title" type="xs:string"/>
+                <xs:element name="cuisine1" type="xs:string"/>
+                <xs:element name="cuisine2" type="xs:string"/>
+                <xs:element name="difficulty" type="difficultyLevel"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="user">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="surname" type="xs:string"/>
+                <xs:element name="skillLevel" type="difficultyLevel"/>
+                <xs:element name="preferredCuisine" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="appData">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="users">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="user" maxOccurs="unbounded" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="recipes">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="recipe" maxOccurs="unbounded" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
